@@ -28,9 +28,16 @@ def detect():
     file.save(image_path)
 
     output_path = os.path.join(OUTPUT_FOLDER, f"result_{filename}")
-    detect_dominant_color_object(image_path, output_path)
+    output_path, color_name = detect_dominant_color_object(image_path, output_path)
 
-    return send_file(output_path, mimetype='image/jpeg')
+    return jsonify({
+        "image": f"/get-image/{os.path.basename(output_path)}",
+        "color": color_name
+    })
+
+@app.route('/get-image/<filename>')
+def get_image(filename):
+    return send_file(os.path.join(OUTPUT_FOLDER, filename), mimetype='image/jpeg')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
