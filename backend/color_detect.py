@@ -35,7 +35,7 @@ def detect_dominant_color_object(image_path, output_path="outputs/output.jpg", n
                         0.9, (0, 255, 0), 2)
 
     cv2.imwrite(output_path, img)
-    return output_path
+    return output_path, color_name
 
 def classify_color(hsv):
     h, s, v = hsv
