@@ -1,17 +1,22 @@
 from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS  # ← Add this
+from flask_cors import CORS
 import os
 from color_detect import detect_dominant_color_object
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-CORS(app)  # ← Enable CORS for all routes
+CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+# 👇 New homepage route
+@app.route('/')
+def home():
+    return 'Color Detector API is live!'
 
 @app.route('/detect', methods=['POST'])
 def detect():
