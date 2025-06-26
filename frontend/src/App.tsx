@@ -5,6 +5,7 @@ function App() {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<string | null>(null)
+  const [color, setColor] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
@@ -14,6 +15,7 @@ function App() {
     if (file) {
       setImage(file)
       setResult(null)
+      setColor(null)
       setPreview(URL.createObjectURL(file))
     }
   }
@@ -25,11 +27,10 @@ function App() {
     formData.append('image', image)
 
     try {
-      const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
-        responseType: 'blob',
-      })
-      const url = URL.createObjectURL(res.data)
-      setResult(url)
+      const res = await axios.post(`${apiBaseUrl}/detect`, formData)
+      const imageUrl = `${apiBaseUrl}${res.data.image}`
+      setResult(imageUrl)
+      setColor(res.data.color)
     } catch (err) {
       alert('Failed to detect color. Check backend URL.')
     } finally {
@@ -83,6 +84,11 @@ function App() {
                   alt="Detected"
                   className="rounded-lg shadow border"
                 />
+                {color && (
+                  <p className="mt-2 text-lg font-semibold" style={{ color: color.toLowerCase() }}>
+                    Detected Color: {color}
+                  </p>
+                )}
               </div>
             )}
           </div>
