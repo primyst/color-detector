@@ -13,7 +13,6 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# 👇 New homepage route
 @app.route('/')
 def home():
     return 'Color Detector API is live!'
