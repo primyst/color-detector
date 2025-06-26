@@ -1,4 +1,6 @@
 flask
+flask-cors
 opencv-python
 scikit-learn
 numpy
+gunicorn
