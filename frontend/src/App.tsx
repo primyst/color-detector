@@ -3,40 +3,46 @@ import axios from 'axios'
 
 function App() {
   const [image, setImage] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
-    setImage(file)
-    setResult(null)
+    if (file) {
+      setImage(file)
+      setResult(null)
+      setPreview(URL.createObjectURL(file))
+    }
   }
 
   const handleUpload = async () => {
     if (!image) return
     setLoading(true)
-
     const formData = new FormData()
     formData.append('image', image)
 
     try {
-      const res = await axios.post('http://localhost:5000/detect', formData, {
+      const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
         responseType: 'blob',
       })
-
       const url = URL.createObjectURL(res.data)
       setResult(url)
     } catch (err) {
-      alert('Failed to process image.')
+      alert('Failed to detect color. Check backend URL.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 flex items-center justify-center px-4">
-      <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-4 text-center text-blue-600">🎨 Color Object Detector</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 flex items-center justify-center px-4 py-10">
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
+        <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
+          🎨 Color Object Detector
+        </h1>
 
         <input
           type="file"
@@ -57,14 +63,28 @@ function App() {
           {loading ? 'Processing...' : 'Detect Color'}
         </button>
 
-        {result && (
-          <div className="mt-6 text-center">
-            <h2 className="text-lg font-medium mb-2 text-gray-700">Detected Result</h2>
-            <img
-              src={result}
-              alt="Detected"
-              className="rounded-lg shadow-md border border-gray-200"
-            />
+        {(preview || result) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 items-start">
+            {preview && (
+              <div className="text-center">
+                <h2 className="font-medium text-gray-700 mb-2">Original</h2>
+                <img
+                  src={preview}
+                  alt="Original"
+                  className="rounded-lg shadow border"
+                />
+              </div>
+            )}
+            {result && (
+              <div className="text-center">
+                <h2 className="font-medium text-gray-700 mb-2">Detected</h2>
+                <img
+                  src={result}
+                  alt="Detected"
+                  className="rounded-lg shadow border"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
