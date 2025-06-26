@@ -20,24 +20,25 @@ function App() {
   }
 
   const handleUpload = async () => {
-    if (!image) return
-    setLoading(true)
-    const formData = new FormData()
-    formData.append('image', image)
+  if (!image) return;
+  setLoading(true);
 
-    try {
-      const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
-        responseType: 'blob',
-      })
-      const url = URL.createObjectURL(res.data)
-      setResult(url)
-    } catch (err) {
-      alert('Failed to detect color. Check backend URL.')
-    } finally {
-      setLoading(false)
-    }
+  const formData = new FormData();
+  formData.append('image', image);
+
+  try {
+    const res = await axios.post(`${apiBaseUrl}/detect`, formData);
+    
+    const data = res.data;
+    setDetectedColor(data.color);
+    setResult(`${apiBaseUrl}${data.image}`);
+  } catch (err) {
+    alert('Failed to detect color. Check backend URL.');
+  } finally {
+    setLoading(false);
   }
-
+};
+  
   return (
     <div className="app-container">
       <div className="card">
@@ -67,11 +68,16 @@ function App() {
               </div>
             )}
             {result && (
-              <div className="image-block">
-                <h2>Detected</h2>
-                <img src={result} alt="Detected" />
-              </div>
-            )}
+  <div className="text-center">
+    <h2 className="font-medium text-gray-700 mb-2">Detected</h2>
+    {detectedColor && <p className="text-blue-600 font-bold">{detectedColor}</p>}
+    <img
+      src={result}
+      alt="Detected"
+      className="rounded-lg shadow border mt-2"
+    />
+  </div>
+)}
           </div>
         )}
       </div>
