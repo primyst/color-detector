@@ -15,7 +15,7 @@ def detect_dominant_color_object(image_path, output_path="outputs/output.jpg", n
 
     # Convert dominant RGB to HSV
     dominant_hsv = cv2.cvtColor(np.uint8([[dominant_color]]), cv2.COLOR_RGB2HSV)[0][0]
-    color_name = classify_color(dominant_hsv)  # ← Get color name
+    color_name = classify_color(dominant_hsv)
 
     lower_bound = np.array([max(dominant_hsv[0] - 10, 0), 50, 50])
     upper_bound = np.array([min(dominant_hsv[0] + 10, 179), 255, 255])
