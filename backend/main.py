@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
-import os
-from color_detect import detect_dominant_color_object
 from werkzeug.utils import secure_filename
+from color_detect import detect_dominant_color_object
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -15,29 +15,25 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route('/')
 def home():
-    return 'Color Detector API is live!'
+    return jsonify({"message": "Color Detection API is live"}), 200
 
 @app.route('/detect', methods=['POST'])
-def detect():
+def detect_color():
     if 'image' not in request.files:
-        return jsonify({"error": "No image provided"}), 400
+        return jsonify({'error': 'No file part'}), 400
 
     file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
     filename = secure_filename(file.filename)
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(image_path)
-
+    input_path = os.path.join(UPLOAD_FOLDER, filename)
     output_path = os.path.join(OUTPUT_FOLDER, f"result_{filename}")
-    output_path, color_name = detect_dominant_color_object(image_path, output_path)
 
-    return jsonify({
-        "image": f"/get-image/{os.path.basename(output_path)}",
-        "color": color_name
-    })
+    file.save(input_path)
 
-@app.route('/get-image/<filename>')
-def get_image(filename):
-    return send_file(os.path.join(OUTPUT_FOLDER, filename), mimetype='image/jpeg')
-
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")
+    try:
+        detect_dominant_color_object(input_path, output_path)
+        return send_file(output_path, mimetype='image/jpeg')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
