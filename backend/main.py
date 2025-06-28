@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file, jsonify, make_response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from color_detect import detect_dominant_color_object
@@ -34,16 +34,10 @@ def detect_color():
     try:
         dominant_rgb = detect_dominant_color_object(input_path, output_path)
         dominant_hex = '#%02x%02x%02x' % tuple(dominant_rgb)
-        return send_file(
-            output_path,
-            mimetype='image/jpeg',
-            as_attachment=False,
-            download_name='detected.jpg',
-            conditional=True,
-            headers={
-                'X-Dominant-Color-RGB': str(dominant_rgb),
-                'X-Dominant-Color-HEX': dominant_hex
-            }
-        )
+
+        response = make_response(send_file(output_path, mimetype='image/jpeg'))
+        response.headers['X-Dominant-Color-RGB'] = str(dominant_rgb)
+        response.headers['X-Dominant-Color-HEX'] = dominant_hex
+        return response
     except Exception as e:
         return jsonify({'error': str(e)}), 500
