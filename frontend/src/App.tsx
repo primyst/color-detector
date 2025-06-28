@@ -6,6 +6,8 @@ function App() {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<string | null>(null)
+  const [dominantColorRGB, setDominantColorRGB] = useState<string | null>(null)
+  const [dominantColorHEX, setDominantColorHEX] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
@@ -14,14 +16,17 @@ function App() {
     const file = e.target.files?.[0] || null
     if (file) {
       setImage(file)
-      setResult(null)
       setPreview(URL.createObjectURL(file))
+      setResult(null)
+      setDominantColorRGB(null)
+      setDominantColorHEX(null)
     }
   }
 
   const handleUpload = async () => {
     if (!image) return
     setLoading(true)
+
     const formData = new FormData()
     formData.append('image', image)
 
@@ -29,10 +34,16 @@ function App() {
       const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
         responseType: 'blob',
       })
-      const url = URL.createObjectURL(res.data)
-      setResult(url)
-    } catch (err) {
-      alert('Failed to detect color. Check backend URL.')
+
+      const blobUrl = URL.createObjectURL(res.data)
+      setResult(blobUrl)
+
+      const rgb = res.headers['x-dominant-color-rgb']
+      const hex = res.headers['x-dominant-color-hex']
+      setDominantColorRGB(rgb || null)
+      setDominantColorHEX(hex || null)
+    } catch (error) {
+      alert('Error detecting color. Check backend connection.')
     } finally {
       setLoading(false)
     }
@@ -57,10 +68,22 @@ function App() {
                 <img src={preview} alt="Original" />
               </div>
             )}
+
             {result && (
               <div>
                 <h3>Detected</h3>
                 <img src={result} alt="Detected" />
+                {dominantColorHEX && (
+                  <div className="color-info">
+                    <p>
+                      <strong>Dominant Color:</strong> {dominantColorHEX} ({dominantColorRGB})
+                    </p>
+                    <div
+                      className="color-swatch"
+                      style={{ backgroundColor: dominantColorHEX }}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
