@@ -1,86 +1,75 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to right, #f0f4f8, #dbeafe);
+/* Global container */
+.container {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  padding: 2rem;
   min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0f4ff, #dbeafe);
 }
 
-.app-container {
-  width: 100%;
-  max-width: 800px;
-  padding: 20px;
-}
-
+/* Card box */
 .card {
-  background: white;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  background-color: #fff;
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
-.title {
+.card h1 {
   text-align: center;
-  font-size: 2rem;
-  color: #2563eb;
-  margin-bottom: 20px;
+  color: #1d4ed8;
+  margin-bottom: 1rem;
 }
 
-.file-input {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 10px;
-  border: 2px solid #dbeafe;
-  border-radius: 8px;
-  cursor: pointer;
+/* Inputs and buttons */
+input[type="file"] {
+  display: block;
+  margin: 1rem auto;
 }
 
-.submit-btn {
+button {
+  display: block;
   width: 100%;
-  padding: 12px;
-  font-weight: 600;
-  font-size: 1rem;
+  padding: 0.7rem;
+  background-color: #2563eb;
   color: white;
-  background: #2563eb;
   border: none;
   border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
-.submit-btn:hover {
-  background: #1e40af;
-}
-
-.submit-btn.loading {
-  background: #93c5fd;
+button:disabled {
+  background-color: #93c5fd;
   cursor: not-allowed;
 }
 
-.image-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 30px;
+button:hover:not(:disabled) {
+  background-color: #1e40af;
 }
 
-.image-block {
-  text-align: center;
+/* Responsive images */
+.images {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.image-block h2 {
-  margin-bottom: 10px;
-  color: #4b5563;
-}
-
-.image-block img {
+.images img {
+  max-width: 100%;
   width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.images div {
+  flex: 1 1 45%;
+  text-align: center;
 }
