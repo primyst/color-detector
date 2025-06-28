@@ -43,6 +43,7 @@ function App() {
       setDominantColorRGB(rgb || null)
       setDominantColorHEX(hex || null)
     } catch (error) {
+      console.error("Error:", error)
       alert('Error detecting color. Check backend connection.')
     } finally {
       setLoading(false)
