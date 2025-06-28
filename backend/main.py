@@ -5,7 +5,8 @@ from color_detect import detect_dominant_color_object
 import os
 
 app = Flask(__name__)
-CORS(app)
+app = Flask(__name__)
+CORS(app, expose_headers=["X-Dominant-Color-RGB", "X-Dominant-Color-HEX"])
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
