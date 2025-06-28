@@ -52,7 +52,7 @@ function App() {
   return (
     <div className="container">
       <div className="card">
-        <h1>🎨 Color Object Detector</h1>
+        <h1>Color Object Detector</h1>
 
         <input type="file" accept="image/*" onChange={handleFileChange} />
 
