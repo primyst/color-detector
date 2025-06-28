@@ -9,7 +9,6 @@ CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
@@ -33,7 +32,18 @@ def detect_color():
     file.save(input_path)
 
     try:
-        detect_dominant_color_object(input_path, output_path)
-        return send_file(output_path, mimetype='image/jpeg')
+        dominant_rgb = detect_dominant_color_object(input_path, output_path)
+        dominant_hex = '#%02x%02x%02x' % tuple(dominant_rgb)
+        return send_file(
+            output_path,
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name='detected.jpg',
+            conditional=True,
+            headers={
+                'X-Dominant-Color-RGB': str(dominant_rgb),
+                'X-Dominant-Color-HEX': dominant_hex
+            }
+        )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
