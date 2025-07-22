@@ -10,6 +10,10 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+@app.route('/')
+def home():
+    return 'Color Detector API is running.'
+
 @app.route('/detect', methods=['POST'])
 def detect_color():
     if 'image' not in request.files:
@@ -41,6 +45,3 @@ def detect_color():
         )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
