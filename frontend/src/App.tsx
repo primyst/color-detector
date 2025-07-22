@@ -24,31 +24,46 @@ function App() {
   }
 
   const handleUpload = async () => {
-    if (!image) return
-    setLoading(true)
+  if (!image) return;
 
-    const formData = new FormData()
-    formData.append('image', image)
+  const formData = new FormData();
+  formData.append("image", image);
 
-    try {
-      const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
-        responseType: 'blob',
-      })
+  try {
+    setLoading(true);
+    setDetectedColors([]);
 
-      const blobUrl = URL.createObjectURL(res.data)
-      setResult(blobUrl)
+    const response = await fetch("https://color-detector-ucj3.onrender.com/detect", {
+      method: "POST",
+      body: formData,
+    });
 
-      const rgb = res.headers['x-dominant-color-rgb']
-      const hex = res.headers['x-dominant-color-hex']
-      setDominantColorRGB(rgb || null)
-      setDominantColorHEX(hex || null)
-    } catch (error) {
-      console.error("Error:", error)
-      alert('Error detecting color. Check backend connection.')
-    } finally {
-      setLoading(false)
+    if (!response.ok) {
+      throw new Error("Error detecting color. Check backend connection.");
     }
+
+    const reader = new FileReader();
+    const blob = await response.blob();
+
+    reader.onloadend = () => {
+      setDetectedImage(reader.result as string);
+
+      // Get color info from headers
+      const rgbHeader = response.headers.get("X-Dominant-Colors-RGB");
+      const hexHeader = response.headers.get("X-Dominant-Colors-HEX");
+
+      if (hexHeader) {
+        const hexArray = JSON.parse(hexHeader.replace(/'/g, '"'));
+        setDetectedColors(hexArray);
+      }
+    };
+    reader.readAsDataURL(blob);
+  } catch (error) {
+    alert("Error detecting color. Check backend connection.");
+  } finally {
+    setLoading(false);
   }
+};
 
   return (
     <div className="container">
