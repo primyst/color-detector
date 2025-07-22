@@ -1,68 +1,56 @@
 import { useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
 function App() {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
-  const [detectedImage, setDetectedImage] = useState<string | null>(null)
-  const [detectedColors, setDetectedColors] = useState<string[]>([])
+  const [result, setResult] = useState<string | null>(null)
+  const [dominantColors, setDominantColors] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
     if (file) {
       setImage(file)
       setPreview(URL.createObjectURL(file))
-      setDetectedImage(null)
-      setDetectedColors([])
+      setResult(null)
+      setDominantColors([])
     }
   }
 
   const handleUpload = async () => {
-    if (!image) return
+  if (!image) return
+  setLoading(true)
 
-    const formData = new FormData()
-    formData.append('image', image)
+  const formData = new FormData()
+  formData.append('image', image)
 
-    try {
-      setLoading(true)
-      setDetectedColors([])
+  try {
+    const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
+      responseType: 'blob',
+    })
 
-      const response = await fetch('https://color-detector-ucj3.onrender.com/detect', {
-        method: 'POST',
-        body: formData,
-      })
+    const blobUrl = URL.createObjectURL(res.data)
+    setResult(blobUrl)
 
-      if (!response.ok) {
-        throw new Error('Error detecting color. Check backend connection.')
-      }
-
-      const blob = await response.blob()
-      const reader = new FileReader()
-
-      reader.onloadend = () => {
-        setDetectedImage(reader.result as string)
-
-        const hexHeader = response.headers.get('X-Dominant-Colors-HEX')
-        if (hexHeader) {
-          try {
-            const hexArray = JSON.parse(hexHeader.replace(/'/g, '"'))
-            if (Array.isArray(hexArray)) {
-              setDetectedColors(hexArray)
-            }
-          } catch (err) {
-            console.error('Error parsing color data:', err)
-          }
-        }
-      }
-
-      reader.readAsDataURL(blob)
-    } catch (error) {
-      alert('Error detecting color. Check backend connection.')
-    } finally {
-      setLoading(false)
+    const hexHeader = res.headers['x-dominant-colors-hex']
+    if (hexHeader) {
+      const parsed = hexHeader
+        .replace(/[\[\]']+/g, '') // remove brackets and single quotes
+        .split(',')
+        .map(c => c.trim())
+      setDominantColors(parsed)
     }
+  } catch (error) {
+    console.error('Error:', error)
+    alert('Error detecting color. Check backend connection.')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="container">
@@ -75,7 +63,7 @@ function App() {
           {loading ? 'Processing...' : 'Detect Color'}
         </button>
 
-        {(preview || detectedImage) && (
+        {(preview || result) && (
           <div className="images">
             {preview && (
               <div>
@@ -84,27 +72,23 @@ function App() {
               </div>
             )}
 
-            {detectedImage && (
+            {result && (
               <div>
                 <h3>Detected</h3>
-                <img src={detectedImage} alt="Detected" />
-
-                {detectedColors.length > 0 && (
-                  <div className="color-info-multiple">
-                    <h4>Detected Colors:</h4>
-                    <div className="color-grid">
-                      {detectedColors.map((hex, index) => (
-                        <div key={index} className="color-box">
-                          <div
-                            className="color-swatch"
-                            style={{ backgroundColor: hex }}
-                          />
-                          <p>{hex}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <img src={result} alt="Detected" />
+                {dominantColors.length > 0 && (
+  <div className="color-info">
+    <h4>Detected Colors:</h4>
+    <div className="color-grid">
+      {dominantColors.map((hex, index) => (
+        <div key={index} className="color-box">
+          <div className="color-swatch" style={{ backgroundColor: hex }} />
+          <p>{hex}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
               </div>
             )}
           </div>
