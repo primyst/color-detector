@@ -1,5 +1,14 @@
+import os
+from flask import Flask, request, jsonify, send_file
+from werkzeug.utils import secure_filename
 from color_detect import detect_dominant_colors
-# ...
+
+app = Flask(__name__)
+
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'outputs'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route('/detect', methods=['POST'])
 def detect_color():
@@ -32,3 +41,6 @@ def detect_color():
         )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
