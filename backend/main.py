@@ -3,8 +3,10 @@ from PIL import Image
 import numpy as np
 from collections import Counter
 from io import BytesIO
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
