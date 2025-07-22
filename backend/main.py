@@ -1,21 +1,5 @@
-from flask import Flask, request, send_file, jsonify, make_response
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
-from color_detect import detect_dominant_color_object
-import os
-
-app = Flask(__name__)
-app = Flask(__name__)
-CORS(app, expose_headers=["X-Dominant-Color-RGB", "X-Dominant-Color-HEX"])
-
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'outputs'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-@app.route('/')
-def home():
-    return jsonify({"message": "Color Detection API is live"}), 200
+from color_detect import detect_dominant_colors
+# ...
 
 @app.route('/detect', methods=['POST'])
 def detect_color():
@@ -33,12 +17,18 @@ def detect_color():
     file.save(input_path)
 
     try:
-        dominant_rgb = detect_dominant_color_object(input_path, output_path)
-        dominant_hex = '#%02x%02x%02x' % tuple(dominant_rgb)
-
-        response = make_response(send_file(output_path, mimetype='image/jpeg'))
-        response.headers['X-Dominant-Color-RGB'] = str(dominant_rgb)
-        response.headers['X-Dominant-Color-HEX'] = dominant_hex
-        return response
+        dominant_colors = detect_dominant_colors(input_path, output_path, n_colors=3)
+        hex_colors = ['#%02x%02x%02x' % tuple(rgb) for rgb in dominant_colors]
+        return send_file(
+            output_path,
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name='detected.jpg',
+            conditional=True,
+            headers={
+                'X-Dominant-Colors-RGB': str(dominant_colors),
+                'X-Dominant-Colors-HEX': str(hex_colors)
+            }
+        )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
