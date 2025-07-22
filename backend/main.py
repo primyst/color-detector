@@ -2,9 +2,10 @@ import os
 from flask import Flask, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from color_detect import detect_dominant_colors
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
