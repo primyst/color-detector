@@ -67,7 +67,7 @@ function App() {
             {result && (
               <div>
                 <h3>Detected</h3>
-                <img src={result} alt="Detected" />
+                <img src={`data:image/png;base64,${result}`} alt="Detected" />
                 {dominantColors.length > 0 && (
   <div className="color-info">
     <h4>Detected Colors:</h4>
