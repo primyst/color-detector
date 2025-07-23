@@ -4,6 +4,7 @@ import numpy as np
 from collections import Counter
 from io import BytesIO
 from flask_cors import CORS
+import base64
 
 app = Flask(__name__)
 CORS(app)
