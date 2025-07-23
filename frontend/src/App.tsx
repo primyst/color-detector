@@ -56,41 +56,37 @@ function App() {
         </button>
 
         {(preview || result) && (
-          <div className="images">
-            {preview && (
-              <div>
-                <h3>Original</h3>
-                <img src={preview} alt="Original" />
-              </div>
-            )}
-
-            {result && (
-  <div>
-    <h3>Detected</h3>
-    <img src={`data:image/png;base64,${result}`} />
-    {dominantColors.length > 0 ? (
-      <div className="color-info">
-        <h4>Detected Colors:</h4>
-        <div className="color-grid">
-          {dominantColors.map((hex, index) => (
-            <div key={index} className="color-box">
-              <div className="color-swatch" style={{ backgroundColor: hex }} />
-              <p>{hex}</p>
-            </div>
-          ))}
-        </div>
+  <div className="images">
+    {preview && (
+      <div>
+        <h3>Original</h3>
+        <img src={preview} alt="Original" />
       </div>
-    ) : (
-      <p>No dominant colors detected.</p>
+    )}
+
+    {result && (
+      <div>
+        <h3>Detected</h3>
+        <img src={`data:image/png;base64,${result}`} alt="Detected" />
+        {dominantColors.length > 0 ? (
+          <div className="color-info">
+            <h4>Detected Colors:</h4>
+            <div className="color-grid">
+              {dominantColors.map((hex, index) => (
+                <div key={index} className="color-box">
+                  <div className="color-swatch" style={{ backgroundColor: hex }} />
+                  <p>{hex}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p>No dominant colors detected.</p>
+        )}
+      </div>
     )}
   </div>
 )}
-  </div>
-)}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )
