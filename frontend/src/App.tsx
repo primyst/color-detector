@@ -38,12 +38,13 @@ function App() {
 
     // Store colors
     setDominantColors(res.data.dominantColors || [])
-  } catch (error) {
-    console.error('Upload error:', error)
-    alert('Upload failed!')
-  } finally {
-    setLoading(false)
-  }
+  } catch (error: any) {
+  console.error('Upload error:', error)
+
+  const message =
+    error?.response?.data?.error || error.message || 'Upload failed!'
+
+  alert(`Upload failed: ${message}`)
 }
 
   return (
