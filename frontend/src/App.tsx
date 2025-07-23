@@ -29,24 +29,16 @@ function App() {
   formData.append('image', image)
 
   try {
-    const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
-      responseType: 'blob',
-    })
+    const res = await axios.post(`${apiBaseUrl}/detect`, formData)
 
-    const blobUrl = URL.createObjectURL(res.data)
-    setResult(blobUrl)
+    // Store base64 string
+    setResult(res.data.detectedImage)
 
-    const hexHeader = res.headers['x-dominant-colors-hex']
-    if (hexHeader) {
-      const parsed = hexHeader
-        .replace(/[\[\]']+/g, '') // remove brackets and single quotes
-        .split(',')
-        .map(c => c.trim())
-      setDominantColors(parsed)
-    }
+    // Store colors
+    setDominantColors(res.data.dominantColors || [])
   } catch (error) {
-    console.error('Error:', error)
-    alert('Error detecting color. Check backend connection.')
+    console.error('Upload error:', error)
+    alert('Upload failed!')
   } finally {
     setLoading(false)
   }
