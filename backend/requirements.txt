@@ -1,10 +1,9 @@
-fastapi
 flask
-uvicorn
-python-multipart
-pillow
+flask_cors
+gunicorn
 opencv-python
 numpy
 scikit-learn
+pillow
 webcolors
-gunicorn
+python-multipart
