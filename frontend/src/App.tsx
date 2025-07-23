@@ -78,6 +78,10 @@ function App() {
           <p>{hex}</p>
         </div>
       ))}
+
+      {dominantColors.length === 0 && (
+  <p>No dominant colors detected.</p>
+)}
     </div>
   </div>
 )}
