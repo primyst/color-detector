@@ -1,7 +1,9 @@
-Flask
-flask-cors
-Pillow
-numpy
+fastapi
+uvicorn
+python-multipart
+pillow
 opencv-python
+numpy
 scikit-learn
+webcolors
 gunicorn
