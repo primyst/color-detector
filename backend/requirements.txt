@@ -1,7 +1,6 @@
-flask
+Flask
 flask-cors
+Pillow
+numpy
 opencv-python
 scikit-learn
-numpy
-gunicorn
-Pillow
