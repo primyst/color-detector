@@ -68,7 +68,7 @@ function App() {
               <div>
                 <h3>Detected</h3>
                 <img src={`data:image/png;base64,${result}`} alt="Detected" />
-                {dominantColors.length > 0 && (
+                {dominantColors.length > 0 ? (
   <div className="color-info">
     <h4>Detected Colors:</h4>
     <div className="color-grid">
@@ -78,8 +78,9 @@ function App() {
           <p>{hex}</p>
         </div>
       ))}
-
-      {dominantColors.length === 0 && (
+    </div>
+  </div>
+) : (
   <p>No dominant colors detected.</p>
 )}
     </div>
