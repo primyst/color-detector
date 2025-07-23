@@ -6,7 +6,9 @@ function App() {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<string | null>(null)
-  const [dominantColors, setDominantColors] = useState<string[]>([])
+  const [dominantColors, setDominantColors] = useState<
+  { name: string; hex: string; rgb: string }[]
+>([])
   const [loading, setLoading] = useState(false)
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
@@ -72,12 +74,14 @@ function App() {
           <div className="color-info">
             <h4>Detected Colors:</h4>
             <div className="color-grid">
-              {dominantColors.map((hex, index) => (
-                <div key={index} className="color-box">
-                  <div className="color-swatch" style={{ backgroundColor: hex }} />
-                  <p>{hex}</p>
-                </div>
-              ))}
+              {dominantColors.map((color, index) => (
+  <div key={index} className="color-box">
+    <div className="color-swatch" style={{ backgroundColor: color.hex }} />
+    <p><strong>{color.name}</strong></p>
+    <p>{color.hex}</p>
+    <p>{color.rgb}</p>
+  </div>
+))}
             </div>
           </div>
         ) : (
