@@ -81,7 +81,6 @@ function App() {
         style={{
           width: '16px',
           height: '16px',
-          borderRadius: '50%',
           backgroundColor: `rgb(${color.rgb.join(',')})`,
           border: '1px solid #ccc',
           flexShrink: 0,
